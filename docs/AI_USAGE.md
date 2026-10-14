@@ -19,6 +19,7 @@ Claude Code wrote much of the code, tests and documentation; Codex reviewed code
 
 ## Where I overruled the AI
 
+- Claude initially used database-specific write forms (`upsert` and `DELETE ... LIMIT`). I required general ORM operations to meet the assignment's rule and had three writes rewritten: retention deletes old rows in primary-key ranges, and a retried batch reads existing rows and inserts only the missing ones. This gave me concrete query and retry behavior to review, instead of accepting the generated implementation unchanged.
 - Idempotency keys were proposed as a known limit to save time; I had them built, since a lost import response would otherwise store every row twice.
 - A review kept `PUT` for a partial settings update as too risky to change; I checked the scope (about ten lines, all tested) and had it changed to `PATCH`.
 - I explicitly asked AI to add **mypy type checking**, with configurations for the backend and frontend, so annotations could be checked rather than accepted because generated code looked plausible. The commands and verification scope are in [TESTING.md](TESTING.md).
