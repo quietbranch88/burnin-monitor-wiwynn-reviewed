@@ -32,6 +32,8 @@ The verified correction cycle passed 392 backend tests on real MariaDB 11.7 with
 
 During the later document review, Codex also ran frontend mypy successfully on 19 source files. A first run used a read-only source mount without a writable cache and failed inside mypy; rerunning with an explicit writable cache completed. Tool failures are distinguished from application type errors rather than reported as a passing check.
 
+After publication, I requested an independent agent to clone the new public repository and repeat acceptance in a separate Docker project with a new database volume. It tested commit `80e9920`; the subsequent commits changed only this document. A fresh BuildKit builder used `--pull --no-cache`, and its log showed Python layers and dependencies being downloaded. The build took about 87 s, builder startup about 25 s, and Compose startup to all services healthy about 40 s. These are separate intervals; the full clone-to-login duration was not precisely recorded. The database did not become unhealthy. The agent repeated the 392 backend tests (96% coverage), 108 frontend passes and seven Node-dependent skips, Ruff and backend mypy. In a real browser it logged out between successful admin, engineer and viewer logins, observed changing telemetry, searched and paged records, generated an Excel report to the download-ready state, and checked the engineer import and viewer read-only navigation. It did not download and inspect that browser-generated workbook. The tested application source matches the published source; this was a fresh project and application build, not a claim that the host had no pre-existing images.
+
 
 ## A review cycle, and what it caught
 
