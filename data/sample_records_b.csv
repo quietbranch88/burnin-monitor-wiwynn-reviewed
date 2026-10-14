@@ -1,0 +1,3 @@
+title,value,category,recorded_at,server
+Sample B - station 21 CPU temperature,64.5,cpu_temp,2026-10-13T09:00:00Z,S0021
+Sample B - station 22 fan speed,9600,fan_rpm,2026-10-13T09:01:00Z,S0022

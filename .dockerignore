@@ -1,0 +1,12 @@
+.git
+.env
+**/__pycache__
+**/.venv
+**/venv
+**/.env
+**/.pytest_cache
+docs
+*.md
+**/.ruff_cache
+**/.mypy_cache
+**/.coverage

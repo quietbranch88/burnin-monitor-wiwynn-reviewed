@@ -1,0 +1,5 @@
+title,value,category,recorded_at,server
+Line 1 station 03 - Chamber temperature,41.2,chamber_temp,2026-10-11T09:00:00Z,S0003
+,39.8,chamber_temp,2026-10-11T09:05:00Z,S0003
+Line 2 station 07 - Power draw,not-a-number,power_w,2026-10-11T09:10:00Z,S0019
+Line 2 station 08 - Fan speed,11250,Fan RPM!,yesterday,

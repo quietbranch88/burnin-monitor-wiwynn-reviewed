@@ -1,0 +1,7 @@
+streamlit==1.64.0
+altair==6.3.0
+requests==2.34.2
+websockets==16.1.1
+pandas==3.0.6
+pyarrow==25.0.1
+tzdata==2026.4

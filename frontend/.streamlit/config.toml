@@ -1,0 +1,91 @@
+[server]
+headless = true
+fileWatcherType = "none"
+# The API rejects files above 2 MB; show the same limit in the uploader.
+maxUploadSize = 2
+
+[browser]
+gatherUsageStats = false
+
+[client]
+# Show the error type only; tracebacks with file paths are for the logs, not the page.
+showErrorDetails = "type"
+# Keep native appearance/About options while excluding recording and developer actions.
+toolbarMode = "minimal"
+
+[runner]
+# Streamlit's default runs a full gc.collect() after every script run, including each
+# 1 s fragment rerun of the live page. With 20 viewers that was 60% of the frontend's
+# CPU (py-spy). Python's normal generational GC still runs.
+postScriptGC = false
+
+[theme]
+# Shared native geometry; both palettes below keep surfaces neutral.
+base = "light"
+baseRadius = "8px"
+buttonRadius = "8px"
+metricValueFontWeight = 600
+showSidebarBorder = true
+# System fonts work offline and include the user's Chinese font fallback.
+
+[theme.light]
+primaryColor = "#3269AC"
+backgroundColor = "#FFFFFF"
+secondaryBackgroundColor = "#F1F3F5"
+textColor = "#20252B"
+borderColor = "#C9CFD6"
+linkColor = "#285B98"
+dataframeBorderColor = "#C9CFD6"
+dataframeHeaderBackgroundColor = "#F1F3F5"
+blueColor = "#3269AC"
+blueBackgroundColor = "#EDF3FA"
+blueTextColor = "#285B98"
+orangeColor = "#B77916"
+orangeBackgroundColor = "#FFF4DD"
+orangeTextColor = "#815309"
+yellowColor = "#B77916"
+yellowBackgroundColor = "#FFF4DD"
+yellowTextColor = "#815309"
+redColor = "#C23B3B"
+redBackgroundColor = "#FCECEC"
+redTextColor = "#A32929"
+
+[theme.light.sidebar]
+backgroundColor = "#F4F5F7"
+secondaryBackgroundColor = "#FFFFFF"
+textColor = "#20252B"
+borderColor = "#C9CFD6"
+
+[theme.dark]
+# Streamlit primary buttons use white labels in both modes.
+primaryColor = "#3269AC"
+backgroundColor = "#12151A"
+secondaryBackgroundColor = "#1D232C"
+textColor = "#E8EBEF"
+borderColor = "#364150"
+linkColor = "#9ABFEF"
+dataframeBorderColor = "#364150"
+dataframeHeaderBackgroundColor = "#1D232C"
+blueColor = "#80A7D9"
+blueBackgroundColor = "#233249"
+blueTextColor = "#B8D3F5"
+orangeColor = "#D5A24C"
+orangeBackgroundColor = "#3D3120"
+orangeTextColor = "#EDC681"
+yellowColor = "#D5A24C"
+yellowBackgroundColor = "#3D3120"
+yellowTextColor = "#EDC681"
+redColor = "#D97676"
+redBackgroundColor = "#40292D"
+redTextColor = "#F2B4B4"
+
+[theme.dark.sidebar]
+backgroundColor = "#0D1117"
+secondaryBackgroundColor = "#1D232C"
+textColor = "#E8EBEF"
+borderColor = "#364150"
+
+[global]
+# Kept filter values are written back into session state on every run (app.py), while the
+# widgets still declare their first-visit defaults; that combination is intended.
+disableWidgetStateDuplicationWarning = true

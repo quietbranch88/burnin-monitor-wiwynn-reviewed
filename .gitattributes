@@ -1,0 +1,3 @@
+# Keep LF endings on every platform: a CRLF in scripts/migrate.sh or .env breaks the containers.
+* text=auto eol=lf
+*.png binary

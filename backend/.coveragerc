@@ -1,0 +1,10 @@
+[run]
+source = app
+branch = True
+# SQLAlchemy's asyncio layer resumes code after each await in a greenlet; without this,
+# every line after a database call is reported as never run.
+concurrency = greenlet, thread
+
+[report]
+show_missing = True
+skip_covered = True

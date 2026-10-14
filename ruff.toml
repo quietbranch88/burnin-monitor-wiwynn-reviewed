@@ -1,0 +1,14 @@
+# `ruff check backend frontend` (see README). The noqa comments in the code refer to these rules.
+line-length = 130
+target-version = "py312"
+
+[lint]
+select = ["E", "F", "I", "B", "UP", "ARG", "BLE", "RUF100"]
+
+[lint.pycodestyle]
+# Long lines are mostly test assertions and interface texts; the formatter target stays 130.
+max-line-length = 150
+
+[lint.per-file-ignores]
+# One translation per line, however long: a wrapped dictionary would be harder to check.
+"frontend/lib/i18n.py" = ["E501"]

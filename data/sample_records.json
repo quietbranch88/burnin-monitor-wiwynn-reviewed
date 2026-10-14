@@ -1,0 +1,74 @@
+{
+  "records": [
+    {
+      "title": "Line 1 station 01 night shift - Chamber temperature",
+      "value": 42.96,
+      "category": "chamber_temp",
+      "recorded_at": "2026-09-28T21:10:00Z",
+      "server": "S0001"
+    },
+    {
+      "title": "Line 3 station 04 night shift - Power draw",
+      "value": 707.98,
+      "category": "power_w",
+      "recorded_at": "2026-09-29T03:27:00Z",
+      "server": "S0008"
+    },
+    {
+      "title": "Line 2 station 01 night shift - CPU temperature",
+      "value": 68.82,
+      "category": "cpu_temp",
+      "recorded_at": "2026-09-29T05:29:00Z",
+      "server": "S0013"
+    },
+    {
+      "title": "Line 3 station 06 night shift - Power draw (retest)",
+      "value": 660.22,
+      "category": "power_w",
+      "recorded_at": "2026-09-29T08:34:00Z",
+      "server": "S0010"
+    },
+    {
+      "title": "Line 2 station 10 night shift - CPU temperature (retest)",
+      "value": 82.33,
+      "category": "cpu_temp",
+      "recorded_at": "2026-09-29T14:40:00Z",
+      "server": "S0002"
+    },
+    {
+      "title": "Line 1 station 06 night shift - Chamber temperature (retest)",
+      "value": 41.55,
+      "category": "chamber_temp",
+      "recorded_at": "2026-09-29T17:48:00Z",
+      "server": "S0006"
+    },
+    {
+      "title": "Line 2 station 06 night shift - Chamber temperature",
+      "value": 39.34,
+      "category": "chamber_temp",
+      "recorded_at": "2026-09-29T21:16:00Z",
+      "server": "S0018"
+    },
+    {
+      "title": "Line 2 station 09 night shift - Power draw",
+      "value": 583.86,
+      "category": "power_w",
+      "recorded_at": "2026-09-29T21:20:00Z",
+      "server": "S0001"
+    },
+    {
+      "title": "Line 3 station 02 night shift - Fan speed (retest)",
+      "value": 9621.0,
+      "category": "fan_rpm",
+      "recorded_at": "2026-09-30T13:28:00Z",
+      "server": "S0006"
+    },
+    {
+      "title": "Line 1 station 06 night shift - CPU temperature (retest)",
+      "value": 68.58,
+      "category": "cpu_temp",
+      "recorded_at": "2026-09-30T13:51:00Z",
+      "server": "S0006"
+    }
+  ]
+}

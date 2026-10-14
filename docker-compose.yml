@@ -1,0 +1,174 @@
+name: burnin-monitor
+
+x-mariadb-image: &mariadb_image mariadb:11.7@sha256:fcc7fcd7114adb5d41f14d116b8aac45f94280d2babfbbb71b4782922ee6d8d4
+
+# Every request is one log line; without a cap the json-file log grows until the disk is full.
+x-logging: &logging
+  driver: json-file
+  options:
+    max-size: "20m"
+    max-file: "5"
+
+x-db-url: &db_url mariadb+asyncmy://${MARIADB_USER:?set MARIADB_USER in .env}:${MARIADB_PASSWORD:?set MARIADB_PASSWORD in .env}@db:3306/${MARIADB_DATABASE:?set MARIADB_DATABASE in .env}?charset=utf8mb4
+
+x-api-env: &api_env
+  DATABASE_URL: *db_url
+  JWT_SECRET: ${JWT_SECRET:?set JWT_SECRET in .env}
+  JWT_EXPIRE_MINUTES: ${JWT_EXPIRE_MINUTES:-480}
+  LOG_LEVEL: ${LOG_LEVEL:-INFO}
+  DB_POOL_SIZE: ${DB_POOL_SIZE:-10}
+  DB_MAX_OVERFLOW: ${DB_MAX_OVERFLOW:-20}
+  DB_POOL_TIMEOUT: ${DB_POOL_TIMEOUT:-10}
+  DB_POOL_RECYCLE: ${DB_POOL_RECYCLE:-1800}
+  REALTIME_INTERVAL_SECONDS: ${REALTIME_INTERVAL_SECONDS:-1}
+  REALTIME_THRESHOLDS: ${REALTIME_THRESHOLDS:-chamber_temp:45,cpu_temp:90,gpu_temp:85,dimm_temp:85,nvme_temp:70,fan_rpm:3000,power_w:2700}
+  REALTIME_SERVERS: ${REALTIME_SERVERS:-20}
+  REALTIME_ALERT_BELOW: ${REALTIME_ALERT_BELOW:-fan_rpm}
+  REALTIME_WARNING_PERCENT: ${REALTIME_WARNING_PERCENT:-90}
+  DISPLAY_LANGUAGE: ${DISPLAY_LANGUAGE:-en}
+  DISPLAY_TZ: ${DISPLAY_TZ:-Asia/Taipei}
+  REALTIME_FLUSH_INTERVAL_SECONDS: ${REALTIME_FLUSH_INTERVAL_SECONDS:-10}
+  REALTIME_FLUSH_BATCH_SIZE: ${REALTIME_FLUSH_BATCH_SIZE:-1000}
+  REALTIME_MAX_PENDING: ${REALTIME_MAX_PENDING:-500000}
+  REALTIME_WRITE_CONCURRENCY: ${REALTIME_WRITE_CONCURRENCY:-4}
+  REALTIME_RETENTION_HOURS: ${REALTIME_RETENTION_HOURS:-12}
+  LOG_RETENTION_DAYS: ${LOG_RETENTION_DAYS:-14}
+
+# Only the migrate step creates the demo accounts; the long-running API never sees these.
+x-seed-env: &seed_env
+  SEED_ADMIN_PASSWORD: ${SEED_ADMIN_PASSWORD:-Admin@12345}
+  SEED_USER_PASSWORD: ${SEED_USER_PASSWORD:-User@12345}
+  SEED_VIEWER_PASSWORD: ${SEED_VIEWER_PASSWORD:-Viewer@12345}
+
+services:
+  db:
+    image: *mariadb_image
+    restart: unless-stopped
+    logging: *logging
+    environment:
+      MARIADB_ROOT_PASSWORD: ${MARIADB_ROOT_PASSWORD:?set MARIADB_ROOT_PASSWORD in .env}
+      MARIADB_DATABASE: ${MARIADB_DATABASE}
+      MARIADB_USER: ${MARIADB_USER}
+      MARIADB_PASSWORD: ${MARIADB_PASSWORD}
+      TZ: UTC
+    # MariaDB flushes and closes cleanly within a few seconds; a kill would mean crash recovery on the next start.
+    stop_grace_period: 30s
+    volumes:
+      - db-data:/var/lib/mysql
+    healthcheck:
+      test: ["CMD", "healthcheck.sh", "--connect", "--innodb_initialized"]
+      interval: 5s
+      timeout: 5s
+      retries: 30
+      start_period: 300s  # a fresh volume's first initialisation can take minutes on slow disks; a pass ends it early
+    networks: [backend]
+
+  # Initialize the schema and seed demo data once, then exit before the API starts.
+  migrate:
+    build:
+      context: .
+      dockerfile: backend/Dockerfile
+      target: runtime
+    image: ${COMPOSE_PROJECT_NAME:-burnin-monitor}-api:local  # one tag per project; migrate and api share it
+    command: ["sh", "/app/scripts/migrate.sh"]
+    environment:
+      <<: [*api_env, *seed_env]
+    healthcheck:
+      disable: true
+    depends_on:
+      db:
+        condition: service_healthy
+    networks: [backend]
+
+  api:
+    build:
+      context: .
+      dockerfile: backend/Dockerfile
+      target: runtime
+    image: ${COMPOSE_PROJECT_NAME:-burnin-monitor}-api:local
+    restart: unless-stopped
+    logging: *logging
+    # The write buffer holds at most REALTIME_MAX_PENDING readings (about 300 MB at the default
+    # 500,000, counting the batch in flight); the ceiling turns a leak into a restart, not a
+    # machine without memory.
+    deploy:
+      resources:
+        limits:
+          memory: 1g
+    # Shutdown writes every buffered reading and log; give it longer than Docker's default 10 s.
+    stop_grace_period: 45s
+    environment: *api_env
+    depends_on:
+      db:
+        condition: service_healthy
+      migrate:
+        condition: service_completed_successfully
+    ports:
+      - "${API_PORT:-8000}:8000"
+    networks: [backend, frontend]
+
+  frontend:
+    build:
+      context: .
+      dockerfile: frontend/Dockerfile
+      target: runtime
+    image: ${COMPOSE_PROJECT_NAME:-burnin-monitor}-frontend:local
+    restart: unless-stopped
+    logging: *logging
+    deploy:
+      resources:
+        limits:
+          memory: 1g
+    environment:
+      API_BASE_URL: http://api:8000/api/v1
+      API_WS_URL: ws://api:8000/api/v1/ws/realtime
+    depends_on:
+      api:
+        condition: service_healthy
+    ports:
+      - "${FRONTEND_PORT:-8501}:8501"
+    networks: [frontend]
+
+  # ---- test profile: `docker compose --profile test run --rm tests` ----
+  test-db:
+    image: *mariadb_image
+    profiles: [test]
+    environment:
+      MARIADB_ROOT_PASSWORD: test-root
+      MARIADB_DATABASE: monitor_test
+      MARIADB_USER: monitor_test
+      MARIADB_PASSWORD: monitor_test
+      TZ: UTC
+    tmpfs: [/var/lib/mysql]
+    healthcheck:
+      test: ["CMD", "healthcheck.sh", "--connect", "--innodb_initialized"]
+      interval: 3s
+      timeout: 5s
+      retries: 40
+    networks: [test]
+
+  tests:
+    build:
+      context: .
+      dockerfile: backend/Dockerfile
+      target: test
+    profiles: [test]
+    environment:
+      DATABASE_URL: mariadb+asyncmy://monitor_test:monitor_test@test-db:3306/monitor_test?charset=utf8mb4
+      JWT_SECRET: test-secret-that-is-at-least-thirty-two-characters
+      BCRYPT_ROUNDS: "4"
+      REALTIME_ENABLED: "false"
+      RETENTION_ENABLED: "false"
+      LOG_LEVEL: WARNING
+    depends_on:
+      test-db:
+        condition: service_healthy
+    networks: [test]
+
+networks:
+  backend:   # db <-> api only; the frontend cannot reach the database
+  frontend:  # api <-> frontend
+  test:
+
+volumes:
+  db-data:

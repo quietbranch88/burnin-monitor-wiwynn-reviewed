@@ -1,0 +1,92 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1440" height="700" viewBox="0 0 1440 700" font-family="Helvetica, Arial, sans-serif">
+  <defs>
+    <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="9" markerHeight="9" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="#33414B"/>
+    </marker>
+    <style>
+      .group { fill: #F5FAFC; stroke: #8FB0C0; stroke-width: 1.8; }
+      .sub { fill: none; stroke: #B5CCD8; stroke-width: 1.5; stroke-dasharray: 6 5; }
+      .node { fill: #E6F3F9; stroke: #006C92; stroke-width: 2; }
+      .title { font-size: 26px; font-weight: bold; fill: #111111; }
+      .subtitle { font-size: 19px; fill: #33414B; }
+      .name { font-size: 23px; font-weight: bold; fill: #111111; }
+      .detail { font-size: 19px; fill: #222B31; }
+      .edge { fill: none; stroke: #33414B; stroke-width: 2.2; }
+      .dashed { stroke-dasharray: 8 6; }
+      .label { font-size: 18px; fill: #111111; }
+      .labelbg { fill: #FFFFFF; }
+    </style>
+  </defs>
+  <rect width="1440" height="700" fill="#FFFFFF"/>
+
+  <!-- Browser -->
+  <rect class="node" x="20" y="335" width="150" height="70" rx="35"/>
+  <text class="name" x="95" y="378" text-anchor="middle">Browser</text>
+
+  <!-- Frontend -->
+  <rect class="group" x="210" y="220" width="300" height="250" rx="12"/>
+  <text class="title" x="230" y="258">Frontend</text>
+  <text class="subtitle" x="230" y="285">container, port 8501</text>
+  <rect class="node" x="230" y="305" width="260" height="140" rx="10"/>
+  <text class="name" x="360" y="350" text-anchor="middle">Streamlit</text>
+  <text class="detail" x="360" y="384" text-anchor="middle">multi-page UI,</text>
+  <text class="detail" x="360" y="411" text-anchor="middle">login, live charts</text>
+
+  <!-- API -->
+  <rect class="group" x="570" y="30" width="580" height="650" rx="12"/>
+  <text class="title" x="592" y="70">API: FastAPI, one worker</text>
+  <text class="subtitle" x="592" y="97">container, port 8000</text>
+
+  <rect class="sub" x="590" y="115" width="540" height="245" rx="10"/>
+  <text class="subtitle" x="608" y="143">Requests</text>
+  <rect class="node" x="620" y="155" width="330" height="86" rx="10"/>
+  <text class="name" x="785" y="190" text-anchor="middle">REST /api/v1</text>
+  <text class="detail" x="785" y="221" text-anchor="middle">JWT, roles, validation</text>
+  <rect class="node" x="620" y="257" width="330" height="86" rx="10"/>
+  <text class="name" x="785" y="292" text-anchor="middle">WebSocket</text>
+  <text class="detail" x="785" y="323" text-anchor="middle">one message per second</text>
+
+  <rect class="sub" x="590" y="390" width="540" height="270" rx="10"/>
+  <text class="subtitle" x="608" y="418">Background tasks</text>
+  <rect class="node" x="610" y="440" width="220" height="96" rx="10"/>
+  <text class="name" x="720" y="477" text-anchor="middle">Generator</text>
+  <text class="detail" x="720" y="508" text-anchor="middle">readings every second</text>
+  <rect class="node" x="860" y="440" width="250" height="96" rx="10"/>
+  <text class="name" x="985" y="477" text-anchor="middle">Batch writers</text>
+  <text class="detail" x="985" y="508" text-anchor="middle">retried with backoff</text>
+  <rect class="node" x="860" y="556" width="250" height="86" rx="10"/>
+  <text class="name" x="985" y="591" text-anchor="middle">Retention</text>
+  <text class="detail" x="985" y="621" text-anchor="middle">deletes expired rows</text>
+
+  <!-- Database and migrate -->
+  <path d="M1240,290 a90,22 0 0,1 180,0 v125 a90,22 0 0,1 -180,0 z" fill="#006C92" stroke="#00465F" stroke-width="2"/>
+  <path d="M1240,290 a90,22 0 0,0 180,0" fill="none" stroke="#00465F" stroke-width="2"/>
+  <text x="1330" y="355" text-anchor="middle" font-size="23" font-weight="bold" fill="#FFFFFF">MariaDB 11.7</text>
+  <text x="1330" y="385" text-anchor="middle" font-size="19" fill="#FFFFFF">volume db-data</text>
+
+  <rect x="1225" y="520" width="210" height="100" rx="10" fill="#FFFFFF" stroke="#4A5A66" stroke-width="2" stroke-dasharray="7 5"/>
+  <text class="name" x="1330" y="556" text-anchor="middle">migrate</text>
+  <text class="detail" x="1330" y="588" text-anchor="middle">schema, demo data</text>
+
+  <!-- Edges -->
+  <path class="edge" d="M170,370 H228" marker-end="url(#arrow)"/>
+  <rect class="labelbg" x="172" y="341" width="54" height="22"/><text class="label" x="199" y="358" text-anchor="middle">HTTP</text>
+
+  <path class="edge dashed" d="M95,335 V180 H618" marker-end="url(#arrow)"/>
+  <rect class="labelbg" x="260" y="168" width="200" height="24"/><text class="label" x="360" y="186" text-anchor="middle">Swagger UI /docs</text>
+
+  <path class="edge" d="M490,345 H535 V215 H618" marker-end="url(#arrow)"/>
+  <path class="edge" d="M490,410 H555 V300 H618" marker-end="url(#arrow)"/>
+
+  <path class="edge" d="M800,440 V345" marker-end="url(#arrow)"/>
+  <rect class="labelbg" x="810" y="368" width="100" height="22"/><text class="label" x="860" y="385" text-anchor="middle">live data</text>
+
+  <path class="edge" d="M830,488 H858" marker-end="url(#arrow)"/>
+
+  <path class="edge" d="M950,198 H1190 V350 H1238" marker-end="url(#arrow)"/>
+  <path class="edge" d="M1110,488 H1190 V350"/>
+  <path class="edge" d="M1110,599 H1190 V488"/>
+  <rect class="labelbg" x="1135" y="255" width="110" height="24"/><text class="label" x="1190" y="273" text-anchor="middle">SQLAlchemy</text>
+
+  <path class="edge" d="M1330,520 V439" marker-end="url(#arrow)"/>
+</svg>
